@@ -62,7 +62,7 @@ jobs:
             sleep 30
 
             # Create database (this is optional if you want to ensure it exists)
-            docker exec mysql-db mysql -uroot -prootpassword -e "CREATE DATABASE IF NOT EXISTS attendance_db;"
+            docker exec mysql-db mysql -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS attendance_db;"
 
             # Pull latest Flask app
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
