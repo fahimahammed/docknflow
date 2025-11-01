@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Attendance Analytics</title>
+</head>
+<body class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center h-screen">
+
+    <div class="backdrop-blur-md bg-white/30 p-8 rounded-lg shadow-lg max-w-xl w-full text-center">
+        <h2 class="text-3xl font-bold text-white drop-shadow-md">📊 Attendance Analytics</h2>
+
+        <div class="mt-4">
+            <label class="text-white">Start Date:</label>
+            <input type="date" id="startDate" class="bg-white/30 text-white p-2 rounded-lg">
+            <label class="text-white ml-2">End Date:</label>
+            <input type="date" id="endDate" class="bg-white/30 text-white p-2 rounded-lg">
+        </div>
+
+        <div class="mt-4">
+            <input type="text" id="studentName" placeholder="Enter Student Name (Optional)"
+                class="bg-white/30 text-white p-2 rounded-lg w-full">
+        </div>
+
+        <button onclick="fetchAnalytics()"
+            class="mt-4 bg-white/30 text-white px-6 py-3 rounded-lg shadow-md transition hover:bg-white/50">
+            🔍 Show Analytics
+        </button>
+
+        <canvas id="attendanceChart" class="mt-6"></canvas>
+    </div>
+
+    <script>
+        function fetchAnalytics() {
+            let startDate = document.getElementById("startDate").value;
+            let endDate = document.getElementById("endDate").value;
+            let studentName = document.getElementById("studentName").value;
+
+            let url = `/attendance_stats?start_date=${startDate}&end_date=${endDate}`;
+            if (studentName) {
+                url += `&student_name=${studentName}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => updateChart(data));
+        }
+
+        function updateChart(data) {
+            let ctx = document.getElementById("attendanceChart").getContext("2d");
+            let chartData = {
+                labels: ["Present", "Absent"],
+                datasets: [{
+                    data: [data.Present, data.Absent],
+                    backgroundColor: ["rgba(0, 255, 0, 0.6)", "rgba(255, 0, 0, 0.6)"],
+                    borderColor: ["green", "red"],
+                    borderWidth: 1
+                }]
+            };
+
+            new Chart(ctx, {
+                type: "pie",
+                data: chartData
+            });
+        }
+    </script>
+
+</body>
+</html>

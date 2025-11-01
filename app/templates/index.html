@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Student Attendance App</title>
+</head>
+<body class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center h-screen">
+
+    <div class="backdrop-blur-md bg-white/30 p-8 rounded-lg shadow-lg max-w-3xl w-full text-center">
+        <h2 class="text-3xl font-bold text-white drop-shadow-md">Student Attendance App | Awesome</h2>
+<h4>This is new update and it should reflect on the web aafter CI/CD</h4>
+
+        <input id="studentName" type="text" placeholder="Enter Student Name" 
+            class="border border-white/50 bg-white/20 backdrop-blur-lg text-white p-3 rounded-md w-full mt-4 focus:outline-none focus:ring-2 focus:ring-white/50">
+        
+        <button onclick="registerStudent()" 
+            class="mt-4 bg-white/30 text-white px-6 py-3 rounded-lg shadow-md transition hover:bg-white/50">
+            Register Student
+        </button>
+
+        <p id="successMessage" class="text-green-300 mt-4 hidden"></p>
+
+        <h3 class="text-2xl mt-6 text-white drop-shadow-md">Attendance Records</h3>
+        <button onclick="fetchAttendance()" 
+            class="bg-white/30 text-white px-4 py-2 rounded-lg mt-2 transition hover:bg-white/50">
+            Refresh
+        </button>
+
+        <div id="attendanceTable" class="mt-4"></div>
+        <button onclick="location.href='/analytics'" class="mt-4 bg-white/30 text-white px-6 py-3 rounded-lg shadow-md transition hover:bg-white/50">
+            📊 View Analytics
+        </button>
+    </div>
+
+    <script>
+        function registerStudent() {
+            let name = document.getElementById("studentName").value;
+            fetch("/register_student", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("successMessage").textContent = data.message;
+                document.getElementById("successMessage").classList.remove("hidden");
+                document.getElementById("studentName").value = "";
+                fetchAttendance();  // Refresh attendance records
+            });
+        }
+
+        function fetchAttendance() {
+            fetch("/get_attendance")
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("attendanceTable").innerHTML = html;
+                });
+        }
+
+        function markAbsent(studentId) {
+            fetch("/mark_absent", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ student_id: studentId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); // Optional: Replace with better UI message
+                fetchAttendance(); // Refresh attendance table
+            });
+        }
+    </script>
+
+</body>
+</html>

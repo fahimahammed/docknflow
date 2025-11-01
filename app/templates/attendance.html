@@ -1,0 +1,29 @@
+<table class="w-full border-collapse border border-white/30 backdrop-blur-md bg-white/20 rounded-lg text-white">
+    <thead>
+        <tr class="bg-white/30">
+            <th class="border p-2">Student Name</th>
+            <th class="border p-2">Date</th>
+            <th class="border p-2">Status</th>
+            <th class="border p-2">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+        <tr>
+            <td class="border p-2">{{ record.name }}</td>
+            <td class="border p-2">{{ record.date }}</td>
+            <td class="border p-2 {% if record.status == 'Absent' %} text-red-400 {% else %} text-blue-600 {% endif %}">
+                {{ record.status }}
+            </td>
+            <td class="border p-2">
+                {% if record.status == "Present" %}
+                    <button onclick="markAbsent('{{ record.student_id }}')" 
+                            class="bg-red-500/50 text-white px-4 py-2 rounded-lg hover:bg-red-800/50">
+                        Mark Absent
+                    </button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
